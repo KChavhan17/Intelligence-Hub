@@ -1,0 +1,20 @@
+{
+  "project_name": "Bharat-Global-Intelligence-Hub",
+  "author_role": "Elite Web Developer",
+  "version": "5.0.0",
+  "framework": "Gradio + OpenAI-Gym-Style-Env",
+  "grading_metrics": {
+    "min_score": 0.0,
+    "max_score": 1.0,
+    "logic": "Time-Decay Freshness"
+  },
+  "sections": [
+    "Geopolitics",
+    "Space Frontier",
+    "Bharat Shakti",
+    "Global Economy",
+    "Future Tech"
+  ],
+  "api_source": "NewsAPI.org",
+  "status": "Siuuuuu-Ready"
+}
