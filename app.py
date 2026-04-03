@@ -38,6 +38,6 @@ with gr.Blocks(theme=gr.themes.Default()) as demo:
     out = gr.Textbox(label="Graded Intelligence Feed", lines=18)
     
     btn.click(get_intel, selection, out)
-
-demo.launch(server_name="0.0.0.0", server_port=7860)
+    
+demo.launch(server_name="0.0.0.0", server_port=7860, share=False, allowed_paths=["/"])
 
