@@ -4,3 +4,6 @@ gymnasium
 numpy
 pandas
 python-dateutil
+flask
+uvicorn
+fastapi
