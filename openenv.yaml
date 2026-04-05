@@ -1,0 +1,10 @@
+version: "1.0.0"
+environment:
+  name: "Intelligence-Hub"
+  type: "custom"
+  # This tells the checker your code is now inside the server folder
+  entrypoint: "server/app.py" 
+  port: 7860
+
+submission:
+  main_file: "inference.py"
