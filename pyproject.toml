@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "intelligence-hub"
+version = "0.1.0"
+dependencies = [
+    "gradio",
+    "fastapi",
+    "uvicorn",
+    "requests",
+    "gymnasium",
+    "python-dateutil",
+    "openenv>=0.2.0"
+]
+
+[project.scripts]
+# This line MUST point to the main function we just created
+server = "server.app:main"
+
+[tool.setuptools]
+packages = ["server"]
+
+
