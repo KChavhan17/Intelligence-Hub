@@ -1,5 +1,4 @@
-Inference Script Example
-===================================
+"""
 MANDATORY
 - Before submitting, ensure the following variables are defined in your environment configuration:
     API_BASE_URL   The API endpoint for the LLM.
