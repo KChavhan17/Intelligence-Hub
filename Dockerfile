@@ -14,5 +14,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 EXPOSE 7860
 
 # Command to run your app
-CMD ["python", "app.py"]
+CMD ["python", "inference.py"]
 
