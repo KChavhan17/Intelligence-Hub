@@ -117,11 +117,15 @@ def get_model_message(client: OpenAI, step: int, last_echoed: str, last_reward: 
         )
         text = (completion.choices[0].message.content or "").strip()
         return text if text else "hello"
-    except Exception as exc:
+     except Exception as exc:
         print(f"[DEBUG] Model request failed: {exc}", flush=True)
         return "hello"
-        async def main() -> None:
-    await asyncio.sleep(10) 
+
+
+     async def main() -> None:          # ← back at module level
+        await asyncio.sleep(10)   
+    
+        
     client = OpenAI(base_url=API_BASE_URL, api_key=API_KEY)
     # --- SAFETY WRAPPER START ---
     try:
