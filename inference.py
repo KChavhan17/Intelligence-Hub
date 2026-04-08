@@ -124,62 +124,71 @@ def get_model_message(client: OpenAI, step: int, last_echoed: str, last_reward: 
     except Exception as exc:
         print(f"[DEBUG] Model request failed: {exc}", flush=True)
         return "hello"
-
-
-async def main() -> None:
+  async def main() -> None:
     client = OpenAI(base_url=API_BASE_URL, api_key=API_KEY)
-
-    env = await MyEnvV4Env.from_docker_image(IMAGE_NAME)
-
-    history: List[str] = []
-    rewards: List[float] = []
-    steps_taken = 0
-    score = 0.0
-    success = False
-
-    log_start(task=TASK_NAME, env=BENCHMARK, model=MODEL_NAME)
-
+    
+    # --- SAFETY WRAPPER START ---
     try:
-        result = await env.reset() # OpenENV.reset()
+        env = await MyEnvV4Env.from_docker_image(IMAGE_NAME)
+        history: List[str] = []
+        rewards: List[float] = []
+        steps_taken = 0
+        score = 0.0
+        success = False
+
+        log_start(task=TASK_NAME, env=BENCHMARK, model=MODEL_NAME)
+
+        result = await env.reset() 
         last_echoed = result.observation.echoed_message
         last_reward = 0.0
 
         for step in range(1, MAX_STEPS + 1):
-            if result.done:
-                break
+            # INNER TRY: If one step fails, the whole program doesn't crash
+            try:
+                if result.done:
+                    break
+                
+                message = get_model_message(client, step, last_echoed, last_reward, history)
+                result = await env.step(MyEnvV4Action(message=message))
+                
+                obs = result.observation
+                reward = result.reward or 0.0
+                done = result.done
+                error = None
+                
+                rewards.append(reward)
+                steps_taken = step
+                last_echoed = obs.echoed_message
+                last_reward = reward
+                
+                log_step(step=step, action=message, reward=reward, done=done, error=error)
+                history.append(f"Step {step}: {message!r} -> reward {reward:+.2f}")
+                
+                if done:
+                    break
+            except Exception as step_error:
+                print(f"[DEBUG] Step {step} error: {step_error}", flush=True)
+                break # Exit the loop but keep going to log_end
 
-            message = get_model_message(client, step, last_echoed, last_reward, history)
-
-            result = await env.step(MyEnvV4Action(message=message))
-            obs = result.observation
-
-            reward = result.reward or 0.0
-            done = result.done
-            error = None
-
-            rewards.append(reward)
-            steps_taken = step
-            last_echoed = obs.echoed_message
-            last_reward = reward
-
-            log_step(step=step, action=message, reward=reward, done=done, error=error)
-
-            history.append(f"Step {step}: {message!r} -> reward {reward:+.2f}")
-
-            if done:
-                break
-
+        # Final score calculation
         score = sum(rewards) / MAX_TOTAL_REWARD if MAX_TOTAL_REWARD > 0 else 0.0
-        score = min(max(score, 0.0), 1.0)  # clamp to [0, 1]
+        score = min(max(score, 0.0), 1.0)
         success = score >= SUCCESS_SCORE_THRESHOLD
 
+    except Exception as critical_error:
+        print(f"[DEBUG] Critical setup error: {critical_error}", flush=True)
+    
     finally:
+        # --- THIS BLOCK MUST ALWAYS RUN ---
         try:
             await env.close()
         except Exception as e:
-            print(f"[DEBUG] env.close() error (container cleanup): {e}", flush=True)
+            print(f"[DEBUG] env.close() error: {e}", flush=True)
+        
+        # The validator MUST see this line to give you a score!
         log_end(success=success, steps=steps_taken, score=score, rewards=rewards)
-
+    # --- SAFETY WRAPPER END ---
 
 if __name__ == "__main__":
     asyncio.run(main())
+
