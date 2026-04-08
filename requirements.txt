@@ -8,3 +8,5 @@ flask
 uvicorn
 fastapi
 openai
+python-dotenv
+asyncio
