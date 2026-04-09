@@ -9,7 +9,7 @@ API_KEY = os.getenv("HF_TOKEN") or os.getenv("API_KEY")
 API_BASE_URL = os.getenv("API_BASE_URL") or "https://router.huggingface.co/v1"
 MODEL_NAME = os.getenv("MODEL_NAME") or "Qwen/Qwen2.5-72B-Instruct"
 # YOUR HF SPACE URL (e.g., https://user-name-space-name.hf.space)
-ENV_URL = os.getenv("ENV_URL", "https://YOUR-SPACE-URL.hf.space") 
+ENV_URL = os.getenv("ENV_URL", "https://keertiwebstack-intelligence-hub.hf.space") 
 
 client = OpenAI(api_key=API_KEY, base_url=API_BASE_URL)
 
