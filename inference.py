@@ -44,16 +44,25 @@ def main():
                 messages=[{"role": "user", "content": f"Complete task: {task_id}"}],
                 max_tokens=150
             )
-            
+
             action_taken = (response.choices[0].message.content or "hello").strip()
+    step_resp = requests.post(
+    ENV_URL.rstrip('/') + "/step",
+    json={"action": action_taken},
+    timeout=10
+)
+step_data = step_resp.json()
+current_reward = step_data.get("reward", 0.0)
+done = step_data.get("done", True)
+error = step_data.get("error") or "null"
+
+rewards.append(current_reward)
+steps_taken = 1
+success = current_reward > 0
+
+log_step(step=1, action=action_taken[:50], reward=current_reward, done=done, error=error)
             
-            # Simulate or fetch reward from your API if available
-            current_reward = 0.85 
-            rewards.append(current_reward)
-            steps_taken = 1
-            success = True
-            
-            log_step(step=1, action=action_taken[:20], reward=current_reward, done=True)
+        
             
         except Exception as e:
             log_step(step=1, action="error", reward=0.0, done=True, error=str(e))
