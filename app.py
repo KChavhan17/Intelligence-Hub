@@ -27,9 +27,9 @@ def get_intel(section):
 # 2. FastAPI app
 app = FastAPI()
 
-# 3. This is the SPECIFIC route the Hackathon needs
 @app.post("/reset")
-async def reset():
+async def reset(data: dict = None):
+    # This matches the requests.post logic in your new inference.py
     return {"status": "success", "message": "Environment reset successfully"}
 
 # 4. Gradio UI (Fixed the 'theme' warning)
