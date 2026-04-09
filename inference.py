@@ -42,11 +42,41 @@ last_echoed = reset_data.get("observation", {}).get("echoed_message", "")
             
             
             # 2. INFERENCE
-            response = client.chat.completions.create(
-                model=MODEL_NAME,
-                messages=[{"role": "user", "content": f"Complete task: {task_id}"}],
-                max_tokens=150
-            )
+            MAX_STEPS = 8
+last_echoed = ""
+last_reward = 0.0
+
+for step in range(1, MAX_STEPS + 1):
+    try:
+        response = client.chat.completions.create(
+            model=MODEL_NAME,
+            messages=[
+                {"role": "system", "content": "Send a long, meaningful message to maximize reward."},
+                {"role": "user", "content": f"Step {step}. Last echo: {last_echoed!r}. Last reward: {last_reward:.2f}. Send your next message."}
+            ],
+            max_tokens=150
+        )
+        action_taken = (response.choices[0].message.content or "hello").strip()
+
+        step_resp = requests.post(ENV_URL.rstrip('/') + "/step", json={"action": action_taken}, timeout=10)
+        step_data = step_resp.json()
+        current_reward = step_data.get("reward", 0.0)
+        done = step_data.get("done", False)
+        error = step_data.get("error") or "null"
+
+        rewards.append(current_reward)
+        steps_taken = step
+        last_echoed = step_data.get("observation", {}).get("echoed_message", action_taken)
+        last_reward = current_reward
+
+        log_step(step=step, action=action_taken[:50], reward=current_reward, done=done, error=error)
+
+        if done:
+            break
+
+    except Exception as step_e:
+        log_step(step=step, action="error", reward=0.0, done=True, error=str(step_e)[:80])
+        break
 
             action_taken = (response.choices[0].message.content or "hello").strip()
     step_resp = requests.post(
