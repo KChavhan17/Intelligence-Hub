@@ -36,7 +36,10 @@ def main():
             log_start(task=task_id, env="my_env_v4", model=MODEL_NAME)
             
             # 1. RESET via API (No Docker!)
-            requests.post(ENV_URL.rstrip('/') + "/reset", json={"task_id": task_id}, timeout=10)
+            reset_resp = requests.post(ENV_URL.rstrip('/') + "/reset", json={"task_id": task_id}, timeout=10)
+reset_data = reset_resp.json()
+last_echoed = reset_data.get("observation", {}).get("echoed_message", "")
+            
             
             # 2. INFERENCE
             response = client.chat.completions.create(
