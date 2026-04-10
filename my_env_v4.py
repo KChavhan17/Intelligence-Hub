@@ -31,9 +31,10 @@ class MyEnvV4Env:
         return MyEnvV4Result(observation=obs, reward=0.0, done=False)
 
     async def step(self, action: MyEnvV4Action):
-        # This matches the 'echo' logic in the official script
-        reward = len(action.message) * 0.1 
-        self.done = True 
+    raw = len(action.message) * 0.1
+    reward = max(0.01, min(raw / (150 * 0.1), 0.99))  # clamp between 0.01 and 0.99
+    self.step_count = getattr(self, 'step_count', 0) + 1
+    self.done = self.step_count >= 8  # done only after 8 steps
         obs = MyEnvV4Observation(echoed_message=action.message)
         return MyEnvV4Result(observation=obs, reward=reward, done=self.done)
 
