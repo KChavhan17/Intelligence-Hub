@@ -96,7 +96,7 @@ async def run_task(client, env, task_name):
 
 
 async def main():
-    await asyncio.sleep(15)
+    await asyncio.sleep(30)
 
     client = OpenAI(api_key=API_KEY, base_url=API_BASE_URL)
     env = None
