@@ -10,3 +10,7 @@ fastapi
 openai
 python-dotenv
 asyncio
+httpx
+typing-extensions
+pydantic
+python-multipart
