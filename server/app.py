@@ -100,5 +100,8 @@ with gr.Blocks() as demo:
 # Mount Gradio on /ui path, keep API on root
 app = gr.mount_gradio_app(app, demo, path="/ui")
 
-if __name__ == "__main__":
+
+def main():
     uvicorn.run(app, host="0.0.0.0", port=7860)
+if __name__ == "__main__":
+    main()
