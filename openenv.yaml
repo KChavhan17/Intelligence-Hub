@@ -2,7 +2,7 @@ version: "1.0.0"
 environment:
   name: "Intelligence-Hub"
   type: "custom"
-  entrypoint: "inference.py"
+  entrypoint: "server/app.py"
   port: 7860
 
 submission:
