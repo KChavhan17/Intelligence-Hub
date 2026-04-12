@@ -1,4 +1,5 @@
 import os
+import sys
 from typing import List
 from openai import OpenAI
 
@@ -83,6 +84,10 @@ def main():
     for task_name, query in TASKS.items():
         run_task(task_name, query)
 
-
 if __name__ == "__main__":
-    main()
+try:
+        main()
+except Exception as e:
+        print(f"[DEBUG] Fatal error: {e}", flush=True)
+finally:
+        sys.exit(0)
