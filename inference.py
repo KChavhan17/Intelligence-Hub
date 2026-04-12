@@ -85,9 +85,9 @@ def main():
         run_task(task_name, query)
 
 if __name__ == "__main__":
-try:
+    try:
         main()
-except Exception as e:
+    except Exception as e:
         print(f"[DEBUG] Fatal error: {e}", flush=True)
-finally:
+    finally:
         sys.exit(0)
